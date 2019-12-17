@@ -1,0 +1,8 @@
+## Interface: 11200
+## Author: Sigz
+## Version: v1.0
+## Title: BFA UI
+## Notes: BFA Like User Interface
+## SavedVariables: BfaUiVars
+
+bfaui.lua
