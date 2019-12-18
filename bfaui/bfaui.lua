@@ -1,5 +1,6 @@
 ADDON_NAME = "bfaui";
 ART_PATH = "Interface\\AddOns\\" .. ADDON_NAME .. "\\art\\";
+version = "1.0"
 
 DEFAULT_CHAT_FRAME:AddMessage("BFA UI: |cffdedee2Type /bfa for options.", 1.0, 1.0, 0.0);
 
