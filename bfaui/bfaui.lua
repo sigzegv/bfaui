@@ -1,24 +1,8 @@
 ADDON_NAME = "bfaui";
 ART_PATH = "Interface\\AddOns\\" .. ADDON_NAME .. "\\art\\";
-version = "1.1"
+version = "2.0"
 
-DEFAULT_CHAT_FRAME:AddMessage("BFA UI: |cffdedee2Type /bfa for options.", 1.0, 1.0, 0.0);
-
-_G = getfenv(0)
-
-local function hooksecurefunc(arg1, arg2, arg3)
-	if type(arg1) == "string" then
-		arg1, arg2, arg3 = _G, arg1, arg2
-	end
-	local orig = arg1[arg2]
-	arg1[arg2] = function(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20)
-		local x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20 = orig(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20)
-
-		arg3(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20)
-
-		return x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20
-	end
-end
+DEFAULT_CHAT_FRAME:AddMessage("BFA UI loaded", 1.0, 1.0, 0.0);
 
 local function null()
 	return;
@@ -152,15 +136,6 @@ local function onUpdateActionBars()
 
         MultiBarBottomRight:SetPoint("LEFT", MultiBarBottomLeft, "RIGHT", 43, 0);
         MultiBarBottomRightButton7:SetPoint("LEFT", MultiBarBottomRight, 0, -54);
---    else -- compact mode
---        if not MultiBarBottomLeft:IsShown() then
---            MultiBarBottomRight:SetPoint("BOTTOMLEFT", ActionButton1, "TOPLEFT", 0, 15);
---            MultiBarBottomRight:SetPoint("BOTTOMLEFT", MultiBarBottomLeft, "TOPLEFT", 0, 5);
---        else
---        end
-
---        MultiBarBottomRightButton7:SetPoint("LEFT", MultiBarBottomRightButton6, "RIGHT", 6, 0);
---        shapebarRef = MultiBarBottomRight;
     end
 
     MainMenuBar.texture1:SetTexture(ART_PATH .. texture .. '1');
@@ -193,7 +168,6 @@ local function onUpdateActionBars()
 end
 
 BfaUiVarsDefault = {
-    ['compactUI'] = 0,
 }
 
 local function initVars()
@@ -210,8 +184,6 @@ local function initVars()
 end
 
 local function onLoad()
-    --Kill(ReputationWatchBar)
-    --Kill(HonorWatchBar)
     Kill(MainMenuBarMaxLevelBar)
 
     initVars();
@@ -245,9 +217,7 @@ end)
 SLASH_BFAUI1 = '/bfa';
 
 local function cmdHelp()
-    DEFAULT_CHAT_FRAME:AddMessage('===== BFA UI v' .. version .. ' usage:');
-    DEFAULT_CHAT_FRAME:AddMessage(SLASH_BFAUI1 .. ' help      : this help message');
-    DEFAULT_CHAT_FRAME:AddMessage(SLASH_BFAUI1 .. ' compact : toggle compact UI mode (current = '.. BfaUiVars.compactUI .. ')');
+    DEFAULT_CHAT_FRAME:AddMessage('===== BFA UI v' .. version);
 end
 
 SlashCmdList['BFAUI'] = function(msg)
@@ -257,16 +227,5 @@ SlashCmdList['BFAUI'] = function(msg)
 
     if (cmd == 'help' or not cmd) then
         cmdHelp();
-    elseif (cmd == 'compact') then
-        if MultiBarBottomRight:IsShown() and MultiBarBottomLeft:IsShown() then
-            if (BfaUiVars.compactUI == 1) then
-                BfaUiVars.compactUI = 0
-            else
-                BfaUiVars.compactUI = 1
-            end
-
-            DEFAULT_CHAT_FRAME:AddMessage('Switch compact UI to ' .. BfaUiVars.compactUI);
-            onUpdateActionBars();
-        end
     end
 end
