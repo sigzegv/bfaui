@@ -1,6 +1,6 @@
 ADDON_NAME = "bfaui";
 ART_PATH = "Interface\\AddOns\\" .. ADDON_NAME .. "\\art\\";
-version = "1.0"
+version = "1.1"
 
 DEFAULT_CHAT_FRAME:AddMessage("BFA UI: |cffdedee2Type /bfa for options.", 1.0, 1.0, 0.0);
 
@@ -98,7 +98,7 @@ local function initActionBars()
         _G["MultiBarLeftButton" .. i .. "HotKey"]:SetAlpha(1)
     end
 
-    MainMenuBar.texture1 = MainMenuBar:CreateTexture('ActionBarTexture1');
+    MainMenuBar.texture1 = MainMenuBar:CreateTexture("ActionBarTexture1");
     MainMenuBar.texture1:SetDrawLayer("Background");
     MainMenuBar.texture1:SetPoint("TOPLEFT", MainMenuBar,"TOPLEFT", 0, 0);
     MainMenuBar.texture1:SetPoint("BOTTOMRIGHT", MainMenuBar,"BOTTOM", 0, 0);
@@ -121,19 +121,28 @@ local function initActionBars()
 end
 
 local function onUpdateActionBars()
-    local texture = 'ActionBarArtSmall';
+    local texture = "ActionBarArtSmall";
     local xpBarWidth = 550;
     local actionBarPos = 245;
     local pageBtnPos = 758;
     local pageNbPos = 266;
     local capPos = 140;
-    local shapebarRef = MultiBarBottomLeft;
+--    local shapebarRef = MultiBarBottomLeft;
+--    local shapebarPos = 1;
+    local shapebarRef = ActionButton1;
+    local shapebarPos = 10;
 
     MultiBarBottomRight:ClearAllPoints();
     MultiBarBottomRightButton7:ClearAllPoints();
 
+    if MultiBarBottomLeft:IsShown() then
+        shapebarRef =  MultiBarBottomLeft;
+        shapebarPos = 10;
+    end
+
     -- large mode
-	if MultiBarBottomRight:IsShown() and BfaUiVars.compactUI == 0 then
+	--if MultiBarBottomRight:IsShown() and compact == 0 then
+	if MultiBarBottomRight:IsShown() then
         xpBarWidth = 794;
         texture = 'ActionBarArtLarge';
         actionBarPos = 118;
@@ -143,14 +152,15 @@ local function onUpdateActionBars()
 
         MultiBarBottomRight:SetPoint("LEFT", MultiBarBottomLeft, "RIGHT", 43, 0);
         MultiBarBottomRightButton7:SetPoint("LEFT", MultiBarBottomRight, 0, -54);
-    else -- compact mode
-        MultiBarBottomRight:SetPoint("BOTTOMLEFT", MultiBarBottomLeft, "TOPLEFT", 0, 10);
-        MultiBarBottomRightButton7:SetPoint("LEFT", MultiBarBottomRightButton6, 'RIGHT', 7, 0);
+--    else -- compact mode
+--        if not MultiBarBottomLeft:IsShown() then
+--            MultiBarBottomRight:SetPoint("BOTTOMLEFT", ActionButton1, "TOPLEFT", 0, 15);
+--            MultiBarBottomRight:SetPoint("BOTTOMLEFT", MultiBarBottomLeft, "TOPLEFT", 0, 5);
+--        else
+--        end
 
-
-        if MultiBarBottomRight:IsShown() then
-            shapebarRef = MultiBarBottomRight;
-        end
+--        MultiBarBottomRightButton7:SetPoint("LEFT", MultiBarBottomRightButton6, "RIGHT", 6, 0);
+--        shapebarRef = MultiBarBottomRight;
     end
 
     MainMenuBar.texture1:SetTexture(ART_PATH .. texture .. '1');
@@ -158,15 +168,15 @@ local function onUpdateActionBars()
     MainMenuExpBar:SetWidth(xpBarWidth);
 
     ActionButton1:ClearAllPoints();
-    ActionButton1:SetPoint('BOTTOMLEFT', MainMenuBar, 'BOTTOMLEFT', actionBarPos, 14);
+    ActionButton1:SetPoint("BOTTOMLEFT", MainMenuBar, "BOTTOMLEFT", actionBarPos, 14);
+
     BonusActionButton1:ClearAllPoints();
-    BonusActionButton1:SetPoint('BOTTOMLEFT', MainMenuBar, 'BOTTOMLEFT', actionBarPos, 15);
+    BonusActionButton1:SetPoint("BOTTOMLEFT", MainMenuBar, "BOTTOMLEFT", actionBarPos, 15);
 
     ShapeshiftButton1:ClearAllPoints();
-    ShapeshiftButton1:SetPoint('BOTTOMLEFT', shapebarRef, 'TOPLEFT', 50, 1);
-
+    ShapeshiftButton1:SetPoint("BOTTOMLEFT", shapebarRef, "TOPLEFT", 50, shapebarPos);
     PetActionButton1:ClearAllPoints();
-    PetActionButton1:SetPoint("BOTTOMLEFT", shapebarRef, "TOPLEFT", 64, 1);
+    PetActionButton1:SetPoint("BOTTOMLEFT", shapebarRef, "TOPLEFT", 64, shapebarPos);
 
     ActionBarUpButton:SetPoint("CENTER", MainMenuBar, "TOPLEFT", pageBtnPos, -86.5);
     ActionBarDownButton:SetPoint("CENTER", MainMenuBar, "TOPLEFT", pageBtnPos, -106);
@@ -176,6 +186,10 @@ local function onUpdateActionBars()
     MainMenuBarLeftEndCap:SetPoint("LEFT", MainMenuBar, "LEFT", capPos, 0);
     MainMenuBarRightEndCap:ClearAllPoints();
     MainMenuBarRightEndCap:SetPoint("RIGHT", MainMenuBar, "RIGHT", -capPos, 0);
+
+    ShapeshiftBarLeft:Hide();
+    ShapeshiftBarMiddle:Hide();
+    ShapeshiftBarRight:Hide();
 end
 
 BfaUiVarsDefault = {
@@ -206,6 +220,8 @@ local function onLoad()
 
     hooksecurefunc(MultiBarBottomRight, 'Show', onUpdateActionBars);
     hooksecurefunc(MultiBarBottomRight, 'Hide', onUpdateActionBars);
+    hooksecurefunc(MultiBarBottomLeft, 'Show', onUpdateActionBars);
+    hooksecurefunc(MultiBarBottomLeft, 'Hide', onUpdateActionBars);
 
     onUpdateActionBars();
 end
@@ -242,7 +258,7 @@ SlashCmdList['BFAUI'] = function(msg)
     if (cmd == 'help' or not cmd) then
         cmdHelp();
     elseif (cmd == 'compact') then
-        if MultiBarBottomRight:IsShown() then
+        if MultiBarBottomRight:IsShown() and MultiBarBottomLeft:IsShown() then
             if (BfaUiVars.compactUI == 1) then
                 BfaUiVars.compactUI = 0
             else
